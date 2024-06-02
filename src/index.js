@@ -4,6 +4,7 @@ const app = express();
 const rateLimit = require("express-rate-limit");
 const { generateChatbotResponse } = require('./chatbot');
 const { generateSummarizeResponse } = require('./summarize');
+const { generateQuizzesResponse } = require('./quizzes');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
@@ -52,6 +53,20 @@ app.post('/api/summarize', apiLimiter, async (req, res) => {
   }
 });
 
+app.post('/api/quizzes', apiLimiter, async (req, res) => {
+  try {
+    const { text } = req.body;
+    const quizzResponse = await generateQuizzesResponse(text, genAI);
+    if (quizzResponse) {
+      res.send(quizzResponse);
+    } else {
+      res.status(500).json({ message: 'Error generating quizz response' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
