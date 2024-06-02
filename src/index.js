@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const rateLimit = require("express-rate-limit");
 const { generateChatbotResponse } = require('./chatbot');
+const { generateSummarizeResponse } = require('./summarize');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
@@ -35,6 +36,22 @@ app.post('/api/chatbot', apiLimiter, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+app.post('/api/summarize', apiLimiter, async (req, res) => {
+  try {
+    const { text } = req.body;
+    const summaryResponse = await generateSummarizeResponse(text, genAI);
+    if (summaryResponse) {
+      res.send(summaryResponse);
+    } else {
+      res.status(500).json({ message: 'Error generating summarize response' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
