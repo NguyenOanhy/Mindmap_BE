@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const rateLimit = require("express-rate-limit");
+const { generateNodeResponse } = require('./node');
 const { generateChatbotResponse } = require('./chatbot');
 const { generateSummarizeResponse } = require('./summarize');
 const { generateQuizzesResponse } = require('./quizzes');
@@ -61,6 +62,22 @@ app.post('/api/quizzes', apiLimiter, async (req, res) => {
       res.send(quizzResponse);
     } else {
       res.status(500).json({ message: 'Error generating quizz response' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.post('/api/nodes', apiLimiter, async (req, res) => {
+  try {
+    const { text } = req.body;
+    const nodeResponse = await generateNodeResponse(text, genAI);
+    if (nodeResponse) {
+      res.setHeader('Content-Type', 'application/json'); // Thiết lập tiêu đề Content-Type là 'application/json'
+      res.send(nodeResponse);
+    } else {
+      res.status(500).json({ message: 'Error generating node response' });
     }
   } catch (error) {
     console.error(error);

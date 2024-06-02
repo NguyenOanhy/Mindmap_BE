@@ -1,4 +1,3 @@
-
 async function generateChatbotResponse(text, genAI) { // Modified to accept a prompt as input
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
