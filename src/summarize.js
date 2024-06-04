@@ -1,6 +1,5 @@
-async function generateSummarizeResponse(text, genAI) {
+async function generateSummarizeResponse(text, model) {
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
       const prompt = "hãy tóm tắt đoạn văn sau bằng tiếng Việt: \n" + text;
       const result = await model.generateContent(prompt);
       const response = await result.response;

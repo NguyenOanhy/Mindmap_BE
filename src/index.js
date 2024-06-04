@@ -8,6 +8,7 @@ const { generateSummarizeResponse } = require('./summarize');
 const { generateQuizzesResponse } = require('./quizzes');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -26,7 +27,7 @@ app.use(cors());
 app.post('/api/chatbot', apiLimiter, async (req, res) => {
   try {
     const { text } = req.body;
-    const chatResponse = await generateChatbotResponse(text, genAI);
+    const chatResponse = await generateChatbotResponse(text, model);
     if (chatResponse) {
       // res.setHeader('Content-Type', 'application/json'); // Thiết lập tiêu đề Content-Type là 'application/json'
       res.send(chatResponse);
@@ -42,7 +43,7 @@ app.post('/api/chatbot', apiLimiter, async (req, res) => {
 app.post('/api/summarize', apiLimiter, async (req, res) => {
   try {
     const { text } = req.body;
-    const summaryResponse = await generateSummarizeResponse(text, genAI);
+    const summaryResponse = await generateSummarizeResponse(text, model);
     if (summaryResponse) {
       res.send(summaryResponse);
     } else {
@@ -57,7 +58,7 @@ app.post('/api/summarize', apiLimiter, async (req, res) => {
 app.post('/api/quizzes', apiLimiter, async (req, res) => {
   try {
     const { text } = req.body;
-    const quizzResponse = await generateQuizzesResponse(text, genAI);
+    const quizzResponse = await generateQuizzesResponse(text, model);
     if (quizzResponse) {
       res.send(quizzResponse);
     } else {
@@ -72,7 +73,7 @@ app.post('/api/quizzes', apiLimiter, async (req, res) => {
 app.post('/api/nodes', apiLimiter, async (req, res) => {
   try {
     const { text } = req.body;
-    const nodeResponse = await generateNodeResponse(text, genAI);
+    const nodeResponse = await generateNodeResponse(text, model);
     if (nodeResponse) {
       res.setHeader('Content-Type', 'application/json'); // Thiết lập tiêu đề Content-Type là 'application/json'
       res.send(nodeResponse);

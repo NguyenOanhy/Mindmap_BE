@@ -1,5 +1,4 @@
-async function generateNodeResponse(input, genAI) {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+async function generateNodeResponse(input, model) {
     try {
       const json_ex = {
         "001": {

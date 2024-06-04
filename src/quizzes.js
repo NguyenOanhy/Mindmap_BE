@@ -1,5 +1,4 @@
-async function generateQuizzesResponse(input, genAI) {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+async function generateQuizzesResponse(input, model) {
     try {
       const question = [
         {
